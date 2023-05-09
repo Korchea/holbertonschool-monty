@@ -11,7 +11,6 @@
 int main(int argc, char *argv[])
 {
 
-
 }
 
 /**
@@ -45,7 +44,7 @@ void pall(stack_t stack)
         printf("%d\n", stack.n);
         if (stack.next != NULL)
         {
-            stack = stack.next;
+            //stack = stack.next;
             free(stack.prev);
         }
         else
@@ -56,7 +55,7 @@ void pall(stack_t stack)
         printf("%d\n", stack.n);
         if (stack.prev != NULL)
         {
-            stack = stack.prev;
+            //stack = stack.prev;
             free(stack.next);
         }
         else
