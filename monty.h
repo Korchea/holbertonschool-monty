@@ -2,6 +2,13 @@
 #define __monty_h__
 
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
@@ -34,8 +41,8 @@ typedef struct instruction_s
 } instruction_t;
 
 int main(int argc, char *argv[]);
-void push(char *num, stack_t stack);
-void pall(stack_t stack);
-int get_opcode(stack_t stack, char *opcode, char *n);
+stack_t *op_push(stack_t **stack, char *num, int line);
+stack_t *op_pall(stack_t **stack, __attribute__((unused))char *num, __attribute__((unused))int line);
+int (*get_opcode(char *op))(stack_t **, char *, unsigned int);
 
 #endif
