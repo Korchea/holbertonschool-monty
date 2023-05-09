@@ -15,6 +15,15 @@ int main(int argc, char *argv[])
 }
 
 /**
+ * Llama a la funcion correspondiente.
+ */
+
+int get_opcode(stack_t stack, char *opcode, char *n)
+{
+
+}
+
+/**
  * Recive un string que contiene un numero,
  * tenemos que transformarlo de char * a int
  * y luego meterlo en el stack.
@@ -57,7 +66,3 @@ void pall(stack_t stack)
     /*DEPENDE DE COMO ESTE HECHO EL STACK ES UNO U OTRO WHILE.*/
 }
 
-int get_opcode(stack_t stack, char *opcode, char *n)
-{
-    
-}
