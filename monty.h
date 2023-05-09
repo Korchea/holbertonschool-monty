@@ -36,5 +36,6 @@ typedef struct instruction_s
 int main(int argc, char *argv[]);
 void push(char *num, stack_t stack);
 void pall(stack_t stack);
+int get_opcode(stack_t stack, char *opcode, char *n);
 
 #endif

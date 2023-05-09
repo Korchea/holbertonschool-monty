@@ -56,3 +56,8 @@ void pall(stack_t stack)
     free(stack);
     /*DEPENDE DE COMO ESTE HECHO EL STACK ES UNO U OTRO WHILE.*/
 }
+
+int get_opcode(stack_t stack, char *opcode, char *n)
+{
+    
+}
