@@ -18,14 +18,15 @@ void op_push(stack_t **stack, unsigned int num)
 	}*/
 	add->n = num;
 	add->next = NULL;
-	if (*stack == NULL)
+	if ((*stack) == NULL)
 	{
 		add->prev = NULL;
-		*stack = add;
+		(*stack) = add;
+		printf("%d\n", add->n);
 	}
 	else
 	{
-		aux = *stack;
+		aux = (*stack);
 		while (aux->next != NULL)
 			aux = aux->next;
 		aux->next = add;
@@ -91,6 +92,7 @@ int main(__attribute__((unused))int argc, char *argv[])
 {
 	char *txt, *token, *tok, *tokaux;
 	ssize_t ps = 0;
+	size_t rl = 0;
 	int tr = 0;
     stack_t *stack;
 
@@ -102,12 +104,13 @@ int main(__attribute__((unused))int argc, char *argv[])
 	txt = malloc(sizeof(char) * 1024);
 	if (txt == NULL)
 		return (0);
-	read(tr, txt, 1024);
-    token = strtok(txt, "\n");
-    while (token != NULL)
+	rl = read(tr, txt, 1024);
+    ps = write(STDOUT_FILENO, txt, rl);
+	token = strtok(txt, "\n");
+	while (token != NULL)
 		{
-			tokaux = strdup(token);
 			tok = strtok(token, " ");
+			tokaux = strdup(tok);
 			while (tok != NULL)
 			{
 				tok = strtok(NULL, " ");
@@ -116,7 +119,6 @@ int main(__attribute__((unused))int argc, char *argv[])
 			token = strtok(NULL, "\n");
 			free(tokaux);
 		}
-	//ps = write(STDOUT_FILENO, txt, rl);
 
 	close(tr);
 	free(txt);
