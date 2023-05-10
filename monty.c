@@ -1,40 +1,60 @@
 #include "monty.h"
 
 /**
- * Lee el codigo que recive en el array de strings de 
- * nombre argv[1], lo recorre y busca el opcode,
- * cuando lo encuentra dependiendo del opcode busca
- * un entero hasta que encuentra un '$',
- * pasa a la siguiente linea.
+ * Recive un string que contiene un numero,
+ * tenemos que transformarlo de char * a int
+ * y luego meterlo en el stack.
  */
 
-int main(__attribute__((unused))int argc, char *argv[])
+void op_push(stack_t **stack, unsigned int num)
 {
-	char *txt, *token;
-	ssize_t ps = 0;
-	int tr = 0;
-    stack_t *stack;
+	stack_t *add, *aux;
 
-	if (argv[1] == NULL)
-		return (0);
-	tr = open(argv[1], O_RDONLY);
-	if (tr == -1)
-		return (0);
-	txt = malloc(sizeof(char) * 1024);
-	if (txt == NULL)
-		return (0);
-	read(tr, txt, 1024);
-    token = strtok(txt, "\n");
-    while (token != NULL)
-		{
-            get_opcode(token)(&stack, 5);
-			token = strtok(NULL, "\n");
-		}
-	//ps = write(STDOUT_FILENO, txt, rl);
+	add = malloc(sizeof(stack_t));
+	/*if (add == NULL)
+	{
+		printf("L<%d>: usage: push integer", num);
+		return (EXIT_FAILURE);
+	}*/
+	add->n = num;
+	add->next = NULL;
+	if (*stack == NULL)
+	{
+		add->prev = NULL;
+		*stack = add;
+	}
+	else
+	{
+		aux = *stack;
+		while (aux->next != NULL)
+			aux = aux->next;
+		aux->next = add;
+		add->prev = aux;
+	}
+	//return (add);
+}
 
-	close(tr);
-	free(txt);
-	return (ps);
+/**
+ * Recibe un stack y lo imprime en LIFO,
+ * con salto de linea luego de cada imprecion.
+ */
+
+void op_pall(stack_t **stack, __attribute__((unused))unsigned int num)
+{
+    while ((*stack) != NULL)
+		(*stack) = (*stack)->next;
+    while ((*stack) != NULL)
+    {
+        printf("%d\n", (*stack)->n);
+        if ((*stack)->prev != NULL)
+        {
+            (*stack) = (*stack)->prev;
+            free((*stack)->next);
+        }
+        else
+            break;
+    }
+    free((*stack));
 }
 
 /**
@@ -43,7 +63,7 @@ int main(__attribute__((unused))int argc, char *argv[])
  * Return: A pointer to the punction the corresponds to the operator given.
  */
 
-int (*get_opcode(char *op))(stack_t **, unsigned int)
+void (*get_opcode(char *op))(stack_t **, unsigned int)
 {
     instruction_t inst[] = {
 		{"push", op_push},
@@ -60,73 +80,45 @@ int (*get_opcode(char *op))(stack_t **, unsigned int)
 }
 
 /**
- * Recive un string que contiene un numero,
- * tenemos que transformarlo de char * a int
- * y luego meterlo en el stack.
+ * Lee el codigo que recive en el array de strings de 
+ * nombre argv[1], lo recorre y busca el opcode,
+ * cuando lo encuentra dependiendo del opcode busca
+ * un entero hasta que encuentra un '$',
+ * pasa a la siguiente linea.
  */
 
-stack_t *op_push(stack_t **stack, char *opcode, int line)
+int main(__attribute__((unused))int argc, char *argv[])
 {
-	stack_t *add, *aux;
-    char *token, **tok;
+	char *txt, *token, *tok, *tokaux;
+	ssize_t ps = 0;
+	int tr = 0;
+    stack_t *stack;
 
+	if (argv[1] == NULL)
+		return (0);
+	tr = open(argv[1], O_RDONLY);
+	if (tr == -1)
+		return (0);
+	txt = malloc(sizeof(char) * 1024);
+	if (txt == NULL)
+		return (0);
+	read(tr, txt, 1024);
+    token = strtok(txt, "\n");
     while (token != NULL)
 		{
-            *tok = token;
+			tokaux = strdup(token);
+			tok = strtok(token, " ");
+			while (tok != NULL)
+			{
+				tok = strtok(NULL, " ");
+            	get_opcode(tokaux)(&stack, atoi(tok));
+			}
 			token = strtok(NULL, "\n");
+			free(tokaux);
 		}
-	add = malloc(sizeof(stack_t));
-	if (add == NULL)
-	{
-		printf("L<%d>: usage: push integer", line);
-		return (EXIT_FAILURE);
-	}
-	add->n = atoi(*tok);
-	add->next = NULL;
-	if (*stack == NULL)
-	{
-		add->prev = NULL;
-		*stack = add;
-	}
-	else
-	{
-		aux = *stack;
-		while (aux->next != NULL)
-			aux = aux->next;
-		aux->next = add;
-		add->prev = aux;
-	}
-	return (add);
-}
+	//ps = write(STDOUT_FILENO, txt, rl);
 
-/**
- * Recibe un stack y lo imprime en LIFO,
- * con salto de linea luego de cada imprecion.
- */
-stack_t *op_pall(stack_t **stack, __attribute__((unused))char *opcode, __attribute__((unused))int line)
-{
-    while ((*stack)->n != NULL)
-    {
-        printf("%d\n", (*stack)->n);
-        if ((*stack)->next != NULL)
-        {
-            //stack = stack.next;
-            free((*stack)->prev);
-        }
-        else
-            break;
-    }
-    while ((*stack)->n != NULL)
-    {
-        printf("%d\n", (*stack)->n);
-        if ((*stack)->prev != NULL)
-        {
-            //stack = stack.prev;
-            free((*stack)->next);
-        }
-        else
-            break;
-    }
-    free((*stack));
-    /*DEPENDE DE COMO ESTE HECHO EL STACK ES UNO U OTRO WHILE.*/
+	close(tr);
+	free(txt);
+	return (ps);
 }

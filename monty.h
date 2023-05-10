@@ -41,8 +41,8 @@ typedef struct instruction_s
 } instruction_t;
 
 int main(int argc, char *argv[]);
-stack_t *op_push(stack_t **stack, char *num, int line);
-stack_t *op_pall(stack_t **stack, __attribute__((unused))char *num, __attribute__((unused))int line);
-int (*get_opcode(char *op))(stack_t **, char *, unsigned int);
+void op_push(stack_t **stack, unsigned int num);
+void op_pall(stack_t **stack, __attribute__((unused))unsigned int num);
+void (*get_opcode(char *op))(stack_t **, unsigned int);
 
 #endif
