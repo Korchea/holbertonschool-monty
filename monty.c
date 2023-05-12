@@ -78,6 +78,9 @@ void (*get_opcode(char *op))(stack_t **, unsigned int)
 	instruction_t inst[] = {
 		{"push", op_push},
 		{"pall", op_pall},
+		{"nop", op_nop},
+		{"pint", op_pint},
+		{"pop", op_pop},
 		{NULL, NULL}};
 	int i = 0;
 

@@ -44,6 +44,9 @@ int main(int argc, char *argv[]);
 void op_push(stack_t **stack, unsigned int num);
 void op_pall(stack_t **stack, __attribute__((unused))unsigned int num);
 void (*get_opcode(char *op))(stack_t **, unsigned int);
+void op_pop(stack_t **stack, unsigned int num);
+void op_pint(stack_t **stack, unsigned int num);
+void op_nop(stack_t **stack, unsigned int num);
 //extern int num;
 
 #endif
