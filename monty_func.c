@@ -6,10 +6,10 @@
  *@num: number of line
  */
 
-void op_nop(stack_t **stack, unsigned int num)
+void op_nop(stack_t **stack, unsigned int line)
 {
 	(void)stack;
-	(void)num;
+	(void)line;
 }
 
 /**
@@ -18,15 +18,20 @@ void op_nop(stack_t **stack, unsigned int num)
  *@num: number of line
  */
 
-void op_pint(stack_t **stack, unsigned int num)
+void op_pint(stack_t **stack, unsigned int line)
 {
-	if (!(*stack))
+	stack_t *aux = (*stack);
+
+	if (!aux)
 	{
-		fprintf(stderr, "L%d: can't pint, stack empty\n", num);
+		fprintf(stderr, "L%d: can't pint, stack empty\n", line);
 		exit(EXIT_FAILURE);
 	}
-
-	printf("%d\n", (*stack)->n);
+	while (aux->next != NULL)
+	{
+		aux = aux->next;
+	}
+	printf("%d\n", aux->n);
 }
 
 /**
@@ -35,18 +40,64 @@ void op_pint(stack_t **stack, unsigned int num)
  *@num: number of line
  */
 
-void op_pop(stack_t **stack, unsigned int num)
+void op_pop(stack_t **stack, unsigned int line)
 {
-	stack_t *aux = NULL;
+	stack_t *aux = (*stack);
 
 	if (!(*stack))
 	{
-		fprintf(stderr, "L%d: can't pop an empty stack\n", num);
+		fprintf(stderr, "L%d: can't pop an empty stack\n", line);
 		exit(EXIT_FAILURE);
 	}
-
-	aux = (*stack)->next;
-	free(*stack);
+	while ((*stack)->next != NULL)
+	{
+		(*stack) = (*stack)->next;
+	}
+	(*stack) = (*stack)->prev;
+	free((*stack)->next);
 	(*stack) = aux;
-	(*stack)->prev;
+}
+
+void op_swap(stack_t **stack, unsigned int line)
+{
+	stack_t *aux = (*stack);
+	int swap, i = 0;
+
+	while ((*stack)->next != NULL)
+	{
+		(*stack) = (*stack)->next;
+		i++;
+	}
+	if (i < 1)
+	{
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line);
+		exit(EXIT_FAILURE);
+	}
+	swap = (*stack)->n;
+	(*stack)->n = (*stack)->prev->n;
+	(*stack)->prev->n = swap;
+	(*stack) = aux;
+}
+
+void op_add(stack_t **stack, unsigned int line)
+{
+	stack_t *aux = (*stack);
+	int sum, i = 0;
+
+	while ((*stack)->next != NULL)
+	{
+		(*stack) = (*stack)->next;
+		i++;
+	}
+	if (i < 1)
+	{
+		fprintf(stderr, "L%d: can't add, stack too short\n", line);
+		exit(EXIT_FAILURE);
+	}
+	sum = (*stack)->n;
+	(*stack) = (*stack)->prev;
+	free((*stack)->next);
+	(*stack)->n += sum;
+	(*stack)->next = NULL;
+	(*stack) = aux;
 }

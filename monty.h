@@ -41,12 +41,14 @@ typedef struct instruction_s
 } instruction_t;
 
 int main(int argc, char *argv[]);
-void op_push(stack_t **stack, unsigned int num);
-void op_pall(stack_t **stack, __attribute__((unused))unsigned int num);
+void op_push(stack_t **stack, unsigned int line);
+void op_pall(stack_t **stack, __attribute__((unused))unsigned int line);
 void (*get_opcode(char *op))(stack_t **, unsigned int);
-void op_pop(stack_t **stack, unsigned int num);
-void op_pint(stack_t **stack, unsigned int num);
-void op_nop(stack_t **stack, unsigned int num);
-//extern int num;
+void op_pop(stack_t **stack, unsigned int line);
+void op_pint(stack_t **stack, unsigned int line);
+void op_nop(stack_t **stack, unsigned int line);
+void op_swap(stack_t **stack, unsigned int line);
+void op_add(stack_t **stack, unsigned int line);
+extern char *num;
 
 #endif
