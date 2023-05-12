@@ -13,26 +13,31 @@ void op_push(stack_t **stack, unsigned int num)
 	add = malloc(sizeof(stack_t));
 	/*if (add == NULL)
 	{
-		printf("L<%d>: usage: push integer", num);
+		printf("L<%d>: usage: push integer", line);
 		return (EXIT_FAILURE);
 	}*/
 	add->n = num;
 	add->next = NULL;
-	if ((*stack) == NULL)
+	if (*stack == NULL)
 	{
 		add->prev = NULL;
-		(*stack) = add;
-		printf("%d\n", add->n);
+		*stack = add;
 	}
 	else
 	{
-		aux = (*stack);
+		aux = *stack;
 		while (aux->next != NULL)
+		{
 			aux = aux->next;
+		}
 		aux->next = add;
 		add->prev = aux;
 	}
-	//return (add);
+	/*while((*stack) != NULL)
+	{
+		printf("%d\n", (*stack)->n);
+		(*stack) = (*stack)->next;
+	}*/
 }
 
 /**
@@ -42,20 +47,24 @@ void op_push(stack_t **stack, unsigned int num)
 
 void op_pall(stack_t **stack, __attribute__((unused))unsigned int num)
 {
-    while ((*stack) != NULL)
-		(*stack) = (*stack)->next;
-    while ((*stack) != NULL)
-    {
-        printf("%d\n", (*stack)->n);
-        if ((*stack)->prev != NULL)
-        {
-            (*stack) = (*stack)->prev;
-            free((*stack)->next);
-        }
-        else
-            break;
-    }
-    free((*stack));
+	stack_t *aux = *stack;
+
+	while (aux->next != NULL)
+	{
+		aux = aux->next;
+	}
+	while (aux != NULL)
+	{
+		printf("%d\n", aux->n);
+		if (aux->prev != NULL)
+		{
+			aux = aux->prev;
+		}
+		else
+		{
+			break;
+		}
+	}
 }
 
 /**
@@ -66,14 +75,13 @@ void op_pall(stack_t **stack, __attribute__((unused))unsigned int num)
 
 void (*get_opcode(char *op))(stack_t **, unsigned int)
 {
-    instruction_t inst[] = {
+	instruction_t inst[] = {
 		{"push", op_push},
 		{"pall", op_pall},
-		{NULL, NULL}
-	};
+		{NULL, NULL}};
 	int i = 0;
 
-	while (inst[i].opcode != NULL && *inst[i].opcode != *op)
+	while (inst[i].opcode != NULL && strcmp(op, inst[i].opcode))
 		i++;
 	if (*inst[i].opcode != *op)
 		return (NULL);
@@ -88,13 +96,11 @@ void (*get_opcode(char *op))(stack_t **, unsigned int)
  * pasa a la siguiente linea.
  */
 
-int main(__attribute__((unused))int argc, char *argv[])
+int main(__attribute__((unused)) int argc, char *argv[])
 {
-	char *txt, *token, *tok, *tokaux;
-	ssize_t ps = 0;
-	size_t rl = 0;
+	char *txt, *token, *tok;
 	int tr = 0;
-    stack_t *stack;
+	stack_t *stack = NULL;
 
 	if (argv[1] == NULL)
 		return (0);
@@ -104,23 +110,23 @@ int main(__attribute__((unused))int argc, char *argv[])
 	txt = malloc(sizeof(char) * 1024);
 	if (txt == NULL)
 		return (0);
-	rl = read(tr, txt, 1024);
-    ps = write(STDOUT_FILENO, txt, rl);
-	token = strtok(txt, "\n");
+	read(tr, txt, 1024);
+	token = strtok(txt, " \n");
 	while (token != NULL)
+	{
+		tok = token;
+		if (strcmp(tok, "pall") == 0)
 		{
-			tok = strtok(token, " ");
-			tokaux = strdup(tok);
-			while (tok != NULL)
-			{
-				tok = strtok(NULL, " ");
-            	get_opcode(tokaux)(&stack, atoi(tok));
-			}
-			token = strtok(NULL, "\n");
-			free(tokaux);
+			op_pall(&stack, 5);
 		}
-
+		token = strtok(NULL, " \n");
+		if (!token)
+			break;
+		get_opcode(tok)(&stack, atoi(token));
+		token = strtok(NULL, " \n");
+	}
 	close(tr);
 	free(txt);
-	return (ps);
+	return (0);
 }
+
