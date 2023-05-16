@@ -12,7 +12,20 @@ void op_push(stack_t **stack, unsigned int line)
 {
 	stack_t *add, *aux;
 	char *flag = "listo";
-
+	int i = 0;
+	if (num == NULL)
+		{
+			fprintf(stderr, "L%d: usage: push integer\n", line);
+			exit(EXIT_FAILURE);
+		}
+	for (i = 0; num[i] != '\0'; i++)
+	{
+		if (isdigit(num[i]) == 0 && num[i] != '-')
+		{
+			fprintf(stderr, "L%d: usage: push integer\n", line);
+			exit(EXIT_FAILURE);
+		}
+	}
 	add = malloc(sizeof(stack_t));
 	if (add == NULL)
 	{
@@ -37,11 +50,6 @@ void op_push(stack_t **stack, unsigned int line)
 		aux->next = add;
 		add->prev = aux;
 	}
-	/*while((*stack) != NULL)
-	{
-		printf("%d\n", (*stack)->n);
-		(*stack) = (*stack)->next;
-	}*/
 }
 
 /**
@@ -49,24 +57,27 @@ void op_push(stack_t **stack, unsigned int line)
  * con salto de linea luego de cada imprecion.
  */
 
-void op_pall(stack_t **stack, __attribute__((unused))unsigned int line)
+void op_pall(stack_t **stack, __attribute__((unused)) unsigned int line)
 {
 	stack_t *aux = *stack;
 
-	while (aux->next != NULL)
+	if (aux != NULL)
 	{
-		aux = aux->next;
-	}
-	while (aux != NULL)
-	{
-		printf("%d\n", aux->n);
-		if (aux->prev != NULL)
+		while (aux->next != NULL)
 		{
-			aux = aux->prev;
+			aux = aux->next;
 		}
-		else
+		while (aux != NULL)
 		{
-			break;
+			printf("%d\n", aux->n);
+			if (aux->prev != NULL)
+			{
+				aux = aux->prev;
+			}
+			else
+			{
+				break;
+			}
 		}
 	}
 }
@@ -90,9 +101,9 @@ void (*get_opcode(char *op))(stack_t **, unsigned int)
 
 	while (inst[i].opcode != NULL && strcmp(op, inst[i].opcode))
 		i++;
-	if (*inst[i].opcode != *op)
+	if (inst[i].opcode == NULL)
 	{
-		/*fprintf(stderr, "L%d: unknown instruction %s\n", line, op);*/
+		fprintf(stderr, "L2: unknown instruction %s\n", op);
 		exit(EXIT_FAILURE);
 	}
 	return (*inst[i].f);
@@ -108,9 +119,9 @@ void (*get_opcode(char *op))(stack_t **, unsigned int)
 
 int main(__attribute__((unused)) int argc, char *argv[])
 {
-	char *txt, *token, *tok;
+	char *txt = NULL, *token = NULL, *tok = NULL;
 	int tr = 0, line = 1;
-	stack_t *stack = NULL;
+	stack_t *stack = NULL, *del_stack = NULL;
 
 	if (argv[1] == NULL)
 		return (0);
@@ -126,26 +137,42 @@ int main(__attribute__((unused)) int argc, char *argv[])
 		fprintf(stderr, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
+	/*while (getline(&cmd, &size, tr) != EOF)
+	{
+		token = strtok(cmd, " \n");
+		while (token)
+		{
+			tok = token;
+			token = strtok(NULL, " ");
+			printf("tok = %s y token = %s\n", tok, token);
+			num = token;
+			get_opcode(tok)(&stack, line);
+			if (!token)
+				break;
+			if (strcmp(num, "listo") == 0)
+				token = strtok(NULL, " \n");
+			line++;
+		}
+	}*/
 	read(tr, txt, 1024);
 	token = strtok(txt, " \n");
 	while (token != NULL)
 	{
 		tok = token;
-		/*if (strcmp(tok, "pall") == 0)
-		{
-			op_pall(&stack, 5);
-		}*/
 		token = strtok(NULL, " \n");
 		num = token;
 		get_opcode(tok)(&stack, line);
 		if (!token)
 			break;
 		if (strcmp(num, "listo") == 0)
-		{
 			token = strtok(NULL, " \n");
-			
-		}
 		line++;
+	}
+	while (stack != NULL)
+	{
+		del_stack = stack;
+		stack = stack->next;
+		free(del_stack);
 	}
 	close(tr);
 	free(txt);
