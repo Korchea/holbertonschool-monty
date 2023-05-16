@@ -1,9 +1,9 @@
 #include "monty.h"
 
 /**
- *op_nop - function that doesn’t do anything
- *@stack: pointer to top of the stack
- *@num: number of line
+ *op_nop - function that doesn’t do anything.
+ *@stack: pointer to top of the stack.
+ *@line: number of line.
  */
 
 void op_nop(stack_t **stack, unsigned int line)
@@ -13,9 +13,9 @@ void op_nop(stack_t **stack, unsigned int line)
 }
 
 /**
- *op_pint - prints the value at the top of the stack
- *@stack: pointer to top of the stack
- *@num: number of line
+ *op_pint - prints the value at the top of the stack.
+ *@stack: pointer to top of the stack.
+ *@line: number of line.
  */
 
 void op_pint(stack_t **stack, unsigned int line)
@@ -35,9 +35,9 @@ void op_pint(stack_t **stack, unsigned int line)
 }
 
 /**
- *op_pop - removes the top element of the stack
- *@stack: pointer to the head of the stack
- *@num: number of line
+ *op_pop - removes the top element of the stack.
+ *@stack: pointer to the head of the stack.
+ *@line: number of line.
  */
 
 void op_pop(stack_t **stack, unsigned int line)
@@ -57,6 +57,12 @@ void op_pop(stack_t **stack, unsigned int line)
 	free((*stack)->next);
 	(*stack) = aux;
 }
+
+/**
+ *op_swap - 'Swaps the top two elements of the stack.'
+ *@stack: Pointer to the head of the stack.
+ *@line: Pumber of line.
+ */
 
 void op_swap(stack_t **stack, unsigned int line)
 {
@@ -78,6 +84,12 @@ void op_swap(stack_t **stack, unsigned int line)
 	(*stack)->prev->n = swap;
 	(*stack) = aux;
 }
+
+/**
+ *op_add - 'Adds the top two elements of the stack.'
+ *@stack: Pointer to the head of the stack.
+ *@line: Pumber of line.
+ */
 
 void op_add(stack_t **stack, unsigned int line)
 {

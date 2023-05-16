@@ -3,9 +3,9 @@
 char *num;
 
 /**
- * Recive un string que contiene un numero,
- * tenemos que transformarlo de char * a int
- * y luego meterlo en el stack.
+ * op_push - 'Push a number to the stack
+ * @stack: Is the stack of numbers.
+ * @line: Is the line of the operation.
  */
 
 void op_push(stack_t **stack, unsigned int line)
@@ -13,11 +13,12 @@ void op_push(stack_t **stack, unsigned int line)
 	stack_t *add, *aux;
 	char *flag = "listo";
 	int i = 0;
+
 	if (num == NULL)
-		{
-			fprintf(stderr, "L%d: usage: push integer\n", line);
-			exit(EXIT_FAILURE);
-		}
+	{
+		fprintf(stderr, "L%d: usage: push integer\n", line);
+		exit(EXIT_FAILURE);
+	}
 	for (i = 0; num[i] != '\0'; i++)
 	{
 		if (isdigit(num[i]) == 0 && num[i] != '-')
@@ -53,8 +54,9 @@ void op_push(stack_t **stack, unsigned int line)
 }
 
 /**
- * Recibe un stack y lo imprime en LIFO,
- * con salto de linea luego de cada imprecion.
+ * op_pall - 'Prints the stack in LIFO.'
+ * @stack: Is the stack of numbers.
+ * @line: Is the line of the operation.
  */
 
 void op_pall(stack_t **stack, __attribute__((unused)) unsigned int line)
@@ -110,55 +112,33 @@ void (*get_opcode(char *op))(stack_t **, unsigned int)
 }
 
 /**
- * Lee el codigo que recive en el array de strings de 
- * nombre argv[1], lo recorre y busca el opcode,
- * cuando lo encuentra dependiendo del opcode busca
- * un entero hasta que encuentra un '$',
- * pasa a la siguiente linea.
+ * main - 'Read a file and make an operation.'
+ * @argc: Is the number of arguments.
+ * @argv: The arguments.
+ * Return: 0 if success, else 1.
  */
 
 int main(__attribute__((unused)) int argc, char *argv[])
 {
 	char *txt = NULL, *token = NULL, *tok = NULL;
-	int tr = 0, line = 1;
+	int tr = 0, line = 0;
 	stack_t *stack = NULL, *del_stack = NULL;
 
 	if (argv[1] == NULL)
-		return (0);
+		return (EXIT_FAILURE);
 	tr = open(argv[1], O_RDONLY);
-	if (tr == -1)
-	{
-		fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
-		exit(EXIT_FAILURE);
-	}
 	txt = malloc(sizeof(char) * 1024);
 	if (txt == NULL)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
 		exit(EXIT_FAILURE);
 	}
-	/*while (getline(&cmd, &size, tr) != EOF)
-	{
-		token = strtok(cmd, " \n");
-		while (token)
-		{
-			tok = token;
-			token = strtok(NULL, " ");
-			printf("tok = %s y token = %s\n", tok, token);
-			num = token;
-			get_opcode(tok)(&stack, line);
-			if (!token)
-				break;
-			if (strcmp(num, "listo") == 0)
-				token = strtok(NULL, " \n");
-			line++;
-		}
-	}*/
 	read(tr, txt, 1024);
 	token = strtok(txt, " \n");
 	while (token != NULL)
 	{
 		tok = token;
+		line++;
 		token = strtok(NULL, " \n");
 		num = token;
 		get_opcode(tok)(&stack, line);
@@ -166,7 +146,6 @@ int main(__attribute__((unused)) int argc, char *argv[])
 			break;
 		if (strcmp(num, "listo") == 0)
 			token = strtok(NULL, " \n");
-		line++;
 	}
 	while (stack != NULL)
 	{
@@ -176,6 +155,5 @@ int main(__attribute__((unused)) int argc, char *argv[])
 	}
 	close(tr);
 	free(txt);
-	return (0);
+	return (EXIT_SUCCESS);
 }
-
